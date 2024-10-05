@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/hdon2")
+@RequestMapping("/coquanthue")
 public class CoQuanThueController {
     @Autowired
     private CoQuanTHueService coQuanTHueService;

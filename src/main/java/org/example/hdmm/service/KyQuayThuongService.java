@@ -18,6 +18,9 @@ public class KyQuayThuongService {
     @Autowired
     private CoQuanThueRepository coQuanThueRepository;
 
+    public KyQuayThuong  getKyQuayThuongById(Integer id){
+        return kyQuayThuongRepository.findById(Long.valueOf(id)).orElseThrow(()->new RuntimeException("Khong tim thay ky quay thuong"));
+    }
 
     public List<KyQuayThuong> getAllKyQuayThuongByCQT(Integer cqt) {
         return kyQuayThuongRepository.findAllByCQT(cqt);
@@ -25,9 +28,11 @@ public class KyQuayThuongService {
 
     // create
     public KyQuayThuong create(KyQuayThuongDTO dto) {
+        if(dto.getTuNgay().compareTo(dto.getDenNgay())>0) throw new RuntimeException("ngay bat dau phai nho hon ngay ket thuc");
         if(kyQuayThuongRepository.existsByMaKyAndCoQuanThue_Id(dto.getMaKy(), dto.getCoQuanThueId())) throw new RuntimeException("Ma ky da ton tai");
-
-        if(kyQuayThuongRepository.existsByDate(dto.getTuNgay(),dto.getCoQuanThueId())||kyQuayThuongRepository.existsByDate(dto.getDenNgay(), dto.getCoQuanThueId())||dto.getTuNgay().compareTo(dto.getDenNgay()) > 0) throw new RuntimeException("Ngay khong hop le");
+        if(kyQuayThuongRepository.existsByDate(dto.getTuNgay(), dto.getCoQuanThueId())) throw new RuntimeException("Ngay bat dau khong hop le");
+        if(kyQuayThuongRepository.existsByDate(dto.getDenNgay(), dto.getCoQuanThueId())) throw new RuntimeException("Ngay ket thuc khong hop le");
+        if(dto.getTuNgay().compareTo(dto.getDenNgay())>0) throw new RuntimeException("ngay bat dau phai nho hon ngay ket thuc");
 
         KyQuayThuong kqt = new KyQuayThuong();
         kqt.setMaKy(dto.getMaKy());
@@ -43,11 +48,16 @@ public class KyQuayThuongService {
 
     }
  //update
-    public KyQuayThuong update(UpdateKQTDTO dto){
+    public KyQuayThuong update(Long id , UpdateKQTDTO dto){
 
-        Long id = dto.getId().longValue();
+
         KyQuayThuong kqt = kyQuayThuongRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Ko tim thay Ky Quay Thuong"));
+        if(dto.getTuNgay().compareTo(dto.getDenNgay())>0) throw new RuntimeException("ngay bat dau phai nho hon ngay ket thuc");
+        if(dto.getTuNgay().compareTo(dto.getDenNgay())>0) throw new RuntimeException("ngay bat dau phai nho hon ngay ket thuc");
+        if(kyQuayThuongRepository.exists1ByDate(dto.getTuNgay(), kqt.getCoQuanThue().getCqt(),id)) throw new RuntimeException("Ngay bat dau khong hop le");
+        if(kyQuayThuongRepository.exists1ByDate(dto.getDenNgay(), kqt.getCoQuanThue().getCqt(),id)) throw new RuntimeException("Ngay ket thuc khong hop le");
+        if(dto.getTenKy().isEmpty()||dto.getTenKy().length()>100) throw new RuntimeException("Ten ky khong hop le");
         kqt.setTenKy(dto.getTenKy());
         kqt.setTuNgay(dto.getTuNgay());
         kqt.setDenNgay(dto.getDenNgay());

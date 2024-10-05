@@ -12,4 +12,8 @@ public interface HoaDonRepository extends JpaRepository<HoaDon, Long> {
 
     @Query(value = "select * from baoph_ds_hdon",nativeQuery = true)
     List<HoaDon> find10HoaDon();
+
+
+
+
 }

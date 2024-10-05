@@ -21,6 +21,12 @@ public class KyQuayThuongController {
     public KyQuayThuongController(KyQuayThuongService kyQuayThuongService) {
         this.kyQuayThuongService = kyQuayThuongService;
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<KyQuayThuong> findById(@PathVariable Integer id) {
+        return ResponseEntity.status(HttpStatus.OK).body(kyQuayThuongService.getKyQuayThuongById(id));
+    }
+
     @GetMapping("/cqt/{cqtId}")
     public ResponseEntity<List<KyQuayThuong>> findAll(@PathVariable Integer cqtId) {
         return ResponseEntity.status(HttpStatus.OK).body(kyQuayThuongService.getAllKyQuayThuongByCQT(cqtId));
@@ -30,11 +36,18 @@ public class KyQuayThuongController {
         KyQuayThuong kqt = kyQuayThuongService.create(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(kqt);
     }
-    @PutMapping
-    public ResponseEntity<KyQuayThuong> updateKyQuayThuong(@RequestBody UpdateKQTDTO dto) {
-        KyQuayThuong kqt = kyQuayThuongService.update(dto);
+    @PutMapping("/{id}")
+    public ResponseEntity<KyQuayThuong> updateKyQuayThuong(@RequestBody UpdateKQTDTO dto , @PathVariable("id") Long id) {
+        KyQuayThuong kqt = kyQuayThuongService.update(id , dto);
         return ResponseEntity.status(HttpStatus.OK).body(kqt);
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteKyQuayThuong( @PathVariable("id") Long id) {
+        kyQuayThuongService.delete(id);
+        return ResponseEntity.status(HttpStatus.OK).body("xoa thanh cong");
+    }
+
 
 
 

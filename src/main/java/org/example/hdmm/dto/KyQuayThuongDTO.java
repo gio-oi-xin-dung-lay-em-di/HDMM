@@ -16,6 +16,6 @@ public class KyQuayThuongDTO {
     private String tenKy;
     private Date tuNgay;
     private Date denNgay;
-    private int coQuanThueId;
+    private Integer coQuanThueId;
 
 }

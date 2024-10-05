@@ -11,7 +11,7 @@ import java.sql.Date;
 @Getter
 @Setter
 public class UpdateKQTDTO {
-    private Integer id;
+
     private String tenKy;
     private Date tuNgay;
     private Date denNgay;
