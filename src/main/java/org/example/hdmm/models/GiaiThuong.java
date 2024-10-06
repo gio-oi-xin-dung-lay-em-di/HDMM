@@ -1,5 +1,6 @@
 package org.example.hdmm.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -31,6 +32,7 @@ public class GiaiThuong {
 
     @ManyToOne
     @JoinColumn(name = "KY_QUAY_THUONG")
+    @JsonIgnore
     private KyQuayThuong kyQuayThuong;
 
 

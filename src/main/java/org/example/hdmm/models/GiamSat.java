@@ -1,5 +1,6 @@
 package org.example.hdmm.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -28,7 +29,7 @@ public class GiamSat {
     private String chucDanh;
 
 
-
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "KY_QUAY_THUONG")
     private KyQuayThuong kyQuayThuong;

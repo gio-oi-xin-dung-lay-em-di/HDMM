@@ -1,21 +1,19 @@
 package org.example.hdmm.dto;
 
+import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.sql.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-public class KyQuayThuongDTO {
-
-    private Integer maKy;
-    private String tenKy;
-    private Date tuNgay;
-    private Date denNgay;
-    private Long coQuanThueId;
-
+public class GiamSatDTO {
+    private Integer stt;
+    private Integer gioiTinh;
+    private String hoTen;
+    private String donVi;
+    private String chucDanh;
 }

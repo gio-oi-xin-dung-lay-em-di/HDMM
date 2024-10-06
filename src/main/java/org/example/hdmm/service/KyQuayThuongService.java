@@ -39,7 +39,7 @@ public class KyQuayThuongService {
         kqt.setTenKy(dto.getTenKy());
         kqt.setTuNgay(dto.getTuNgay());
         kqt.setDenNgay(dto.getDenNgay());
-
+        kqt.setStatus(1);
         CoQuanThue cqt =coQuanThueRepository.findById(dto.getCoQuanThueId())
                 .orElseThrow(() -> new RuntimeException("Ko tim thay cqt"));
 
@@ -53,10 +53,17 @@ public class KyQuayThuongService {
 
         KyQuayThuong kqt = kyQuayThuongRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Ko tim thay Ky Quay Thuong"));
-        if(dto.getTuNgay().compareTo(dto.getDenNgay())>0) throw new RuntimeException("ngay bat dau phai nho hon ngay ket thuc");
-        if(dto.getTuNgay().compareTo(dto.getDenNgay())>0) throw new RuntimeException("ngay bat dau phai nho hon ngay ket thuc");
-        if(kyQuayThuongRepository.exists1ByDate(dto.getTuNgay(), kqt.getCoQuanThue().getCqt(),id)) throw new RuntimeException("Ngay bat dau khong hop le");
-        if(kyQuayThuongRepository.exists1ByDate(dto.getDenNgay(), kqt.getCoQuanThue().getCqt(),id)) throw new RuntimeException("Ngay ket thuc khong hop le");
+
+        if(kqt.getTuNgay() == dto.getTuNgay()||kqt.getDenNgay()== dto.getDenNgay()) throw new RuntimeException("Tu ngay hoac den ngay khong duoc trung");
+
+        if(dto.getTuNgay().compareTo(kqt.getDenNgay())>0) throw new RuntimeException("ngay bat dau phai nho hon ngay ket thuc");
+        if(dto.getTuNgay().compareTo(kqt.getDenNgay())>0) throw new RuntimeException("ngay bat dau phai nho hon ngay ket thuc");
+
+
+
+
+        if(kyQuayThuongRepository.existsByDate(dto.getTuNgay(), kqt.getCoQuanThue().getCqt())) throw new RuntimeException("Ngay bat dau khong hop le");
+        if(kyQuayThuongRepository.existsByDate(dto.getDenNgay(), kqt.getCoQuanThue().getCqt())) throw new RuntimeException("Ngay ket thuc khong hop le");
         if(dto.getTenKy().isEmpty()||dto.getTenKy().length()>100) throw new RuntimeException("Ten ky khong hop le");
         kqt.setTenKy(dto.getTenKy());
         kqt.setTuNgay(dto.getTuNgay());

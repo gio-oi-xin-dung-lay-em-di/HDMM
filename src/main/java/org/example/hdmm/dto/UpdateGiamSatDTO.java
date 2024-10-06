@@ -5,17 +5,15 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.sql.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-public class KyQuayThuongDTO {
+public class UpdateGiamSatDTO {
 
-    private Integer maKy;
-    private String tenKy;
-    private Date tuNgay;
-    private Date denNgay;
-    private Long coQuanThueId;
+    private Integer gioiTinh;
+    private String hoTen;
+    private String donVi;
+    private String chucDanh;
 
 }
