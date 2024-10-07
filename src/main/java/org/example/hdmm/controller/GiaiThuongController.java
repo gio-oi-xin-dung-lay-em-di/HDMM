@@ -5,10 +5,12 @@ import org.example.hdmm.dto.UpdateGiaiThuongDTO;
 import org.example.hdmm.models.GiaiThuong;
 import org.example.hdmm.service.GiaiThuongService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.awt.print.Pageable;
 import java.util.List;
 
 @RestController
@@ -22,6 +24,9 @@ public class GiaiThuongController {
     }
     @GetMapping("/ky/{id}")
     public ResponseEntity<List<GiaiThuong>> getByKy(@PathVariable("id") Long id){
+
+
+
         return ResponseEntity.status(HttpStatus.OK).body(giaiThuongService.findByKyQuayThuong(id));
     }
 

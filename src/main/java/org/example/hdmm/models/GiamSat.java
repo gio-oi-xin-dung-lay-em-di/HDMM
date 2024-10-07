@@ -20,7 +20,7 @@ public class GiamSat {
     @Column(name = "STT")
     private Integer STT;
     @Column(name = "GIOI_TINH" , nullable = false)
-    private Integer gioiTinh;
+    private Boolean gioiTinh;
     @Column(name = "HO_TEN" , nullable = false)
     private String hoTen;
     @Column(name = "DON_VI" , nullable = false)

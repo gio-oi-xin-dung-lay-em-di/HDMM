@@ -12,7 +12,7 @@ import lombok.Setter;
 @Setter
 public class GiamSatDTO {
     private Integer stt;
-    private Integer gioiTinh;
+    private Boolean gioiTinh;
     private String hoTen;
     private String donVi;
     private String chucDanh;

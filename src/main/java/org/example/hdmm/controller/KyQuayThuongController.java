@@ -5,9 +5,13 @@ import org.example.hdmm.dto.KyQuayThuongDTO;
 import org.example.hdmm.dto.UpdateKQTDTO;
 import org.example.hdmm.models.KyQuayThuong;
 import org.example.hdmm.service.KyQuayThuongService;
+
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 
 import java.util.List;
 
@@ -28,8 +32,9 @@ public class KyQuayThuongController {
     }
 
     @GetMapping("/cqt/{cqtId}")
-    public ResponseEntity<List<KyQuayThuong>> findAll(@PathVariable Integer cqtId) {
-        return ResponseEntity.status(HttpStatus.OK).body(kyQuayThuongService.getAllKyQuayThuongByCQT(cqtId));
+    public ResponseEntity<List<KyQuayThuong>> findAll(@PathVariable String cqtId,@RequestParam(defaultValue = "10") int pageSize,@RequestParam(defaultValue = "0") int page) {
+        Pageable pageable = PageRequest.of(page, pageSize);
+        return ResponseEntity.status(HttpStatus.OK).body(kyQuayThuongService.getAllKyQuayThuongByCQT(cqtId,pageable));
     }
     @PostMapping
     public ResponseEntity<KyQuayThuong> createKyQuayThuong(@RequestBody KyQuayThuongDTO dto) {

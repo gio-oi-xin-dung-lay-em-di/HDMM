@@ -7,6 +7,7 @@ import org.example.hdmm.models.KyQuayThuong;
 import org.example.hdmm.repository.CoQuanThueRepository;
 import org.example.hdmm.repository.KyQuayThuongRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,8 +23,8 @@ public class KyQuayThuongService {
         return kyQuayThuongRepository.findById(Long.valueOf(id)).orElseThrow(()->new RuntimeException("Khong tim thay ky quay thuong"));
     }
 
-    public List<KyQuayThuong> getAllKyQuayThuongByCQT(Integer cqt) {
-        return kyQuayThuongRepository.findAllByCQT(cqt);
+    public List<KyQuayThuong> getAllKyQuayThuongByCQT(String cqt, Pageable pageable) {
+        return kyQuayThuongRepository.findAllByCQT(cqt,pageable);
     }
 
     // create

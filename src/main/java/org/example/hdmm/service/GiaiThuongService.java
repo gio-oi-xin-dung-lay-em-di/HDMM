@@ -7,6 +7,7 @@ import org.example.hdmm.models.KyQuayThuong;
 import org.example.hdmm.repository.GiaiThuongReppository;
 import org.example.hdmm.repository.KyQuayThuongRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

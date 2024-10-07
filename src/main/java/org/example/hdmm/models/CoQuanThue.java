@@ -20,7 +20,7 @@ public class CoQuanThue {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "CQT")
-    private long cqt;
+    private String cqt;
     @Column(nullable = false,name = "TEN_CQT")
     private String tenCQT;
     @JsonIgnore

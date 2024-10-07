@@ -11,7 +11,7 @@ import lombok.Setter;
 @Setter
 public class UpdateGiamSatDTO {
 
-    private Integer gioiTinh;
+    private Boolean gioiTinh;
     private String hoTen;
     private String donVi;
     private String chucDanh;
