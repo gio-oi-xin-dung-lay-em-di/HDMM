@@ -1,10 +1,10 @@
 package org.example.hdmm.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import jakarta.persistence.*;
 import lombok.*;
-
-import javax.lang.model.element.Name;
 import java.sql.Date;
 import java.util.List;
 
@@ -14,8 +14,10 @@ import java.util.List;
 @Entity
 @Table(name = "BAOPH_KY_QUAY_THUONG")
 public class KyQuayThuong {
+    @JsonSerialize(using = ToStringSerializer.class)
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+
     private Long id;
     @Column(name = "MA_KY_QUAY_THUONG",precision = 4,nullable = false)
     private Integer maKy;
@@ -58,12 +60,4 @@ public class KyQuayThuong {
     private List<GiaiThuong> giaiThuongList;
 
 
-
-    public KyQuayThuong( String tenKy, Date tuNgay, Date denNgay, int status) {
-
-        this.tenKy = tenKy;
-        this.tuNgay = tuNgay;
-        this.denNgay = denNgay;
-        this.status = status;
-    }
 }

@@ -10,9 +10,9 @@ import lombok.Setter;
 @Getter
 @Setter
 public class UpdateGiaiThuongDTO {
-    private int giaiThuong ;
+
     private Integer giaTri ;
     private Integer soLuong;
-    private Integer soGiaiCN ;
-    private Integer soGiaiDN ;
+    private Integer soGiaiCN =0 ;
+    private Integer soGiaiDN =0 ;
 }

@@ -9,5 +9,5 @@ import java.util.List;
 public interface GiamSatRepository extends JpaRepository<GiamSat, Long> {
 
     List<GiamSat> getGiamSatsByKyQuayThuong_IdAndSTT(Long ky,Integer stt);
-    List<GiamSat> getGiamSatsByKyQuayThuong_Id(Long ky);
+    List<GiamSat> getGiamSatsByKyQuayThuong_IdOrderBySTT(Long ky);
 }

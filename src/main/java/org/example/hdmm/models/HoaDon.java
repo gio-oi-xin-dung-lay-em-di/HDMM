@@ -1,6 +1,8 @@
 package org.example.hdmm.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -16,7 +18,8 @@ import java.sql.Date;
 @Table(name = "BAOPH_DS_HDON")
 public class HoaDon {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonSerialize(using = ToStringSerializer.class)
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "MAHD", length = 36)
@@ -85,9 +88,9 @@ public class HoaDon {
     @OneToOne(mappedBy = "hoaDon",fetch = FetchType.LAZY)
     private KetQua ketQua;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne()
     @JoinColumn(name = "CQT")
-    @JsonIgnore
+
     private CoQuanThue coQuanThue;
 
 

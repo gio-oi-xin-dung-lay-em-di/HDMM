@@ -2,15 +2,18 @@ package org.example.hdmm.service;
 
 import org.example.hdmm.dto.KyQuayThuongDTO;
 import org.example.hdmm.dto.UpdateKQTDTO;
-import org.example.hdmm.models.CoQuanThue;
-import org.example.hdmm.models.KyQuayThuong;
+import org.example.hdmm.models.*;
 import org.example.hdmm.repository.CoQuanThueRepository;
+import org.example.hdmm.repository.GiaiThuongReppository;
 import org.example.hdmm.repository.KyQuayThuongRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Random;
+
 
 @Service
 public class KyQuayThuongService {
@@ -18,7 +21,14 @@ public class KyQuayThuongService {
     private KyQuayThuongRepository kyQuayThuongRepository;
     @Autowired
     private CoQuanThueRepository coQuanThueRepository;
-
+    @Autowired
+    private HoaDonService hoaDonService;
+    @Autowired
+    private GiaiThuongReppository giaiThuongReppository;
+    @Autowired
+    private GiaiThuongService giaiThuongService;
+    @Autowired
+    private KetQuaService ketQuaService;
     public KyQuayThuong  getKyQuayThuongById(Integer id){
         return kyQuayThuongRepository.findById(Long.valueOf(id)).orElseThrow(()->new RuntimeException("Khong tim thay ky quay thuong"));
     }
@@ -28,23 +38,36 @@ public class KyQuayThuongService {
     }
 
     // create
-    public KyQuayThuong create(KyQuayThuongDTO dto) {
-        if(dto.getTuNgay().compareTo(dto.getDenNgay())>0) throw new RuntimeException("ngay bat dau phai nho hon ngay ket thuc");
-        if(kyQuayThuongRepository.existsByMaKyAndCoQuanThue_Id(dto.getMaKy(), dto.getCoQuanThueId())) throw new RuntimeException("Ma ky da ton tai");
-        if(kyQuayThuongRepository.existsByDate(dto.getTuNgay(), dto.getCoQuanThueId())) throw new RuntimeException("Ngay bat dau khong hop le");
-        if(kyQuayThuongRepository.existsByDate(dto.getDenNgay(), dto.getCoQuanThueId())) throw new RuntimeException("Ngay ket thuc khong hop le");
-        if(dto.getTuNgay().compareTo(dto.getDenNgay())>0) throw new RuntimeException("ngay bat dau phai nho hon ngay ket thuc");
+    public KyQuayThuong create(KyQuayThuongDTO dto,String cqtId) {
+        if(dto.getMaKy()==null) throw new RuntimeException("kyNull");
+        if(kyQuayThuongRepository.existsByMaKy(dto.getMaKy())) throw new RuntimeException("maKyExist");
 
+        if(dto.getTenKy()==null||dto.getTenKy().isEmpty()) throw new RuntimeException("tenKyNull");
+
+        if(dto.getTuNgay()==null) throw new RuntimeException("startDateNull");
+        if(kyQuayThuongRepository.existsByDate(dto.getTuNgay(), cqtId)) throw new RuntimeException("startDateInvalid");
+
+        if(dto.getDenNgay()==null) throw new RuntimeException("endDateNull");
+        if(kyQuayThuongRepository.existsByDate(dto.getDenNgay(),cqtId)) throw new RuntimeException("endDateInvalid");
+
+        if(dto.getTuNgay().compareTo(dto.getDenNgay())>0) throw new RuntimeException("start_endDateInvalid");
+//        hoaDonService.setAllKy(dto.getTuNgay(),dto.getDenNgay(),dto.getMaKy());
         KyQuayThuong kqt = new KyQuayThuong();
         kqt.setMaKy(dto.getMaKy());
         kqt.setTenKy(dto.getTenKy());
         kqt.setTuNgay(dto.getTuNgay());
         kqt.setDenNgay(dto.getDenNgay());
         kqt.setStatus(1);
-        CoQuanThue cqt =coQuanThueRepository.findById(dto.getCoQuanThueId())
-                .orElseThrow(() -> new RuntimeException("Ko tim thay cqt"));
+        Random random = new Random();
+
+        long randomLong = (long) (random.nextDouble() * 9_000_000_000L) + 1_000_000_000L;
+        kqt.setId(randomLong);
+
+        CoQuanThue cqt =coQuanThueRepository.findById(cqtId)
+                .orElseThrow(() -> new RuntimeException("Ko tim thay 2 cqt"));
 
         kqt.setCoQuanThue(cqt);
+
         return kyQuayThuongRepository.save(kqt);
 
     }
@@ -53,33 +76,87 @@ public class KyQuayThuongService {
 
 
         KyQuayThuong kqt = kyQuayThuongRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Ko tim thay Ky Quay Thuong"));
+                .orElseThrow(() -> new RuntimeException("kqtNotFound"));
+        if(kqt.getTuNgay() == dto.getTuNgay() ||kqt.getDenNgay() == dto.getDenNgay()) throw new RuntimeException("date_duplicated");
+        if(dto.getTuNgay().compareTo(dto.getDenNgay())>=0) throw new RuntimeException("start_endDateInvalid");
 
-        if(kqt.getTuNgay() == dto.getTuNgay()||kqt.getDenNgay()== dto.getDenNgay()) throw new RuntimeException("Tu ngay hoac den ngay khong duoc trung");
-
-        if(dto.getTuNgay().compareTo(kqt.getDenNgay())>0) throw new RuntimeException("ngay bat dau phai nho hon ngay ket thuc");
-        if(dto.getTuNgay().compareTo(kqt.getDenNgay())>0) throw new RuntimeException("ngay bat dau phai nho hon ngay ket thuc");
-
-
-
-
-        if(kyQuayThuongRepository.existsByDate(dto.getTuNgay(), kqt.getCoQuanThue().getCqt())) throw new RuntimeException("Ngay bat dau khong hop le");
-        if(kyQuayThuongRepository.existsByDate(dto.getDenNgay(), kqt.getCoQuanThue().getCqt())) throw new RuntimeException("Ngay ket thuc khong hop le");
-        if(dto.getTenKy().isEmpty()||dto.getTenKy().length()>100) throw new RuntimeException("Ten ky khong hop le");
+        if(kyQuayThuongRepository.existsByDate(dto.getTuNgay(), kqt.getCoQuanThue().getCqt())) throw new RuntimeException("startDateInvalid");
+        if(kyQuayThuongRepository.existsByDate(dto.getDenNgay(), kqt.getCoQuanThue().getCqt())) throw new RuntimeException("endDateInvalid");
+        if(dto.getTenKy().isEmpty()||dto.getTenKy().length()>100) throw new RuntimeException("tenInvalid");
         kqt.setTenKy(dto.getTenKy());
         kqt.setTuNgay(dto.getTuNgay());
         kqt.setDenNgay(dto.getDenNgay());
         return kyQuayThuongRepository.save(kqt);
 
     }
+    public KyQuayThuong xuli(Long id){
+        KyQuayThuong kqt = kyQuayThuongRepository.findById(id).orElseThrow(() -> new RuntimeException("kqtNotFound"));
+        Object[] countData = hoaDonService.countData(kqt.getCoQuanThue().getCqt(),kqt.getTuNgay(),kqt.getDenNgay()).get(0);
+        BigDecimal dnDuDk = countData[0]==null?new BigDecimal(0):(BigDecimal) countData[0];
+        BigDecimal cnDuDk =countData[1]==null?new BigDecimal(0):(BigDecimal) countData[1];;
+        BigDecimal dnKoDuDk = countData[2]==null?new BigDecimal(0):(BigDecimal) countData[2];;
+        BigDecimal cnKoDuDk = countData[3]==null?new BigDecimal(0):(BigDecimal) countData[3];;
+        BigDecimal total =  dnDuDk.add(dnKoDuDk).add(cnKoDuDk).add(cnDuDk);
+
+
+        kqt.setCnDuDK(cnDuDk.intValue());
+        kqt.setCnKoDuDK(cnKoDuDk.intValue());
+        kqt.setDnDuDK(dnDuDk.intValue());
+        kqt.setDnKoDuDK(dnKoDuDk.intValue());
+
+        kqt.setTongSo(total.intValue());
+        kqt.setStatus(3);
+        //hoaDonService.setAllKy(kqt.getTuNgay(),kqt.getDenNgay(),kqt.getMaKy());
+
+        return kyQuayThuongRepository.save(kqt);
+    }
 
     // Delete
     public void delete(Long id) {
         kyQuayThuongRepository.deleteById(id);
     }
+    public KyQuayThuong updateStatus(Long id,Integer status) {
+        KyQuayThuong kqt =  kyQuayThuongRepository.findById(id).orElseThrow(()->new RuntimeException("kqtNotFound"));
+        kqt.setStatus(status);
+        return kyQuayThuongRepository.save(kqt);
+    }
+
+    public Integer countTotal(String cqtId){
+        return kyQuayThuongRepository.countByCQT(cqtId);
+    }
 
 
 
+    public List<GiaiThuong> quayThuong(Long kqtId){
+        KyQuayThuong kqt = kyQuayThuongRepository.findById(kqtId).orElseThrow(()->new RuntimeException("kqtNotFound"));
+        List<GiaiThuong> giaiThuongList = kqt.getGiaiThuongList();
+
+
+        int[] arrTong;
+
+
+        for(GiaiThuong giaiThuong: giaiThuongList){
+
+
+
+
+            if(giaiThuong.getSoGiaiCN()!=null&& giaiThuong.getSoGiaiDN()!=null){
+                int[] arrCn = new int[giaiThuong.getSoGiaiCN()];
+                int[] arrDn = new int[giaiThuong.getSoGiaiDN()];
+
+
+
+
+                //ketQuaService.create(giaiThuong,hoadon);
+            }
+            else{
+
+            }
+
+          //List<HoaDon>  listhd=   giaiThuongService.quayThuong(giaiThuong,kqt);
+        }
+        return null;
+    }
 
 
 }

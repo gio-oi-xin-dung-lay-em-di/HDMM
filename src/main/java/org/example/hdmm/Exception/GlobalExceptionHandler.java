@@ -22,7 +22,7 @@ public class GlobalExceptionHandler {
         ExceptionDTO exceptionDTO = new ExceptionDTO();
         exceptionDTO.setStatus(false);
         exceptionDTO.setMessage(e.getMessage());
-
+        System.out.println(e);
 
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)

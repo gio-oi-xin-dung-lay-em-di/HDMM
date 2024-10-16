@@ -10,15 +10,20 @@ import java.sql.Date;
 import java.util.List;
 
 public interface KyQuayThuongRepository extends JpaRepository<KyQuayThuong, Long> {
-    @Query("SELECT CASE WHEN COUNT (e) >0 THEN true ELSE false END FROM KyQuayThuong e WHERE e.maKy = :maKy AND e.coQuanThue.cqt = :cqt")
+    @Query("SELECT CASE WHEN COUNT (e) >=1 THEN true ELSE false END FROM KyQuayThuong e WHERE e.maKy = :maKy AND e.coQuanThue.cqt = :cqt")
     boolean existsByMaKyAndCoQuanThue_Id(@Param("maKy") Integer maKy,@Param("cqt") String cqt);
-    @Query("SELECT CASE WHEN COUNT(e) > 0 THEN true ELSE false END FROM KyQuayThuong e " +
+    @Query("SELECT CASE WHEN COUNT(e) > 1 THEN true ELSE false END FROM KyQuayThuong e " +
             "WHERE e.tuNgay <= :date AND e.denNgay >= :date AND e.coQuanThue.cqt = :cqt ")
     boolean existsByDate(@Param("date") Date date , @Param("cqt") String cqt);
     @Query("SELECT CASE WHEN COUNT(e) >0 THEN true ELSE false END FROM KyQuayThuong e " +
             "WHERE e.tuNgay <= :date AND e.denNgay >= :date AND e.coQuanThue.cqt = :cqt AND e.id != :id ")
     boolean exists1ByDate(@Param("date") Date date , @Param("cqt") String cqt,@Param("id")Long id);
-    @Query("select e from KyQuayThuong e where e.coQuanThue.cqt = :cqt")
+    @Query("select e from KyQuayThuong e where e.coQuanThue.cqt = :cqt order by e.maKy desc ")
     List<KyQuayThuong> findAllByCQT(@Param("cqt") String cqt, Pageable pageable);
 
+    @Query("SELECT CASE WHEN COUNT (e) >=1 THEN true ELSE false END FROM KyQuayThuong e WHERE e.maKy = :maKy")
+    boolean existsByMaKy(@Param("maKy") Integer maKy);
+    @Query("select count(e) from KyQuayThuong e where e.coQuanThue.cqt = :cqt")
+
+    Integer countByCQT(@Param("cqt") String cqt);
 }

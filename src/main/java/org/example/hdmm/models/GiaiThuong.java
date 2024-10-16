@@ -1,6 +1,8 @@
 package org.example.hdmm.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -17,7 +19,8 @@ import java.util.List;
 @Table(name = "BAOPH_TTIN_GIAI_THUONG")
 public class GiaiThuong {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonSerialize(using = ToStringSerializer.class)
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     @Column(name = "GIAI_THUONG")
     private int giaiThuong = 1;

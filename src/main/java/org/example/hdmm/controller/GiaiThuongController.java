@@ -12,17 +12,20 @@ import org.springframework.web.bind.annotation.*;
 
 import java.awt.print.Pageable;
 import java.util.List;
-
+@CrossOrigin(origins = "http://localhost:3000", maxAge = 3600)
 @RestController
 @RequestMapping("/giaithuong")
 public class GiaiThuongController {
     @Autowired
+
     private GiaiThuongService giaiThuongService;
     @GetMapping("/{id}")
+    @CrossOrigin
     public ResponseEntity<GiaiThuong> getById(@PathVariable("id") Long id){
         return ResponseEntity.status(HttpStatus.OK).body(giaiThuongService.finById(id));
     }
     @GetMapping("/ky/{id}")
+    @CrossOrigin
     public ResponseEntity<List<GiaiThuong>> getByKy(@PathVariable("id") Long id){
 
 
@@ -31,18 +34,23 @@ public class GiaiThuongController {
     }
 
     @DeleteMapping("/{id}")
+    @CrossOrigin
     public ResponseEntity<String> deleteGiaiThuong(@PathVariable("id") Long id){
         giaiThuongService.delete(id);
         return ResponseEntity.status(HttpStatus.OK).body("Xoa thanh cong");
     }
-    @PostMapping("/{ky}")
+    @PostMapping("/ky/{ky}")
+    @CrossOrigin
     public ResponseEntity<GiaiThuong> createGiaiThuong(@PathVariable("ky") Long ky, @RequestBody GiaiThuongDTO dto){
         return ResponseEntity.status(HttpStatus.OK).body(giaiThuongService.create(dto,ky));
     }
-    @PutMapping("/{ky}")
-    public ResponseEntity<GiaiThuong> updateGiaiThuong(@PathVariable("ky") Long idGiai, @RequestBody UpdateGiaiThuongDTO dto){
+    @PutMapping("/id/{idGiai}")
+    @CrossOrigin
+    public ResponseEntity<GiaiThuong> updateGiaiThuong(@PathVariable("idGiai") Long idGiai, @RequestBody UpdateGiaiThuongDTO dto){
         return ResponseEntity.status(HttpStatus.OK).body(giaiThuongService.update(dto,idGiai));
     }
+
+
 
 
 

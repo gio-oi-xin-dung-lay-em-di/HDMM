@@ -11,9 +11,9 @@ import lombok.Setter;
 @Getter
 @Setter
 public class GiaiThuongDTO {
-    private int giaiThuong ;
+    private Integer giaiThuong ;
     private Integer giaTri ;
-    private Integer soLuong;
-    private Integer soGiaiCN ;
-    private Integer soGiaiDN ;
+    private Integer soLuong ;
+    private Integer soGiaiCN=0 ;
+    private Integer soGiaiDN=0 ;
 }

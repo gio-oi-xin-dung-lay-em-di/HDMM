@@ -12,7 +12,7 @@ import java.util.List;
 public interface GiaiThuongReppository extends JpaRepository<GiaiThuong,Long> {
     @Query("select g from GiaiThuong g where g.kyQuayThuong.id = :kqt and g.giaiThuong = :giai")
     List<GiaiThuong> listByGiaiAndKy (@Param("kqt") Long kyQuayThuong,Integer giai);
-    @Query("select g from GiaiThuong g where g.kyQuayThuong.id = :kqt")
+    @Query("select g from GiaiThuong g where g.kyQuayThuong.id = :kqt order by g.giaiThuong")
     List<GiaiThuong> findByKQT (@Param("kqt") Long kyQuayThuong);
 
 
