@@ -84,7 +84,7 @@ public class HoaDon {
 
     @Column(name = "STA_UPDATE", length = 1)
     private String staUpdate;
-
+    @JsonIgnore
     @OneToOne(mappedBy = "hoaDon",fetch = FetchType.LAZY)
     private KetQua ketQua;
 

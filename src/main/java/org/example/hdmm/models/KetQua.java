@@ -1,5 +1,6 @@
 package org.example.hdmm.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import jakarta.persistence.*;
@@ -20,10 +21,11 @@ public class KetQua {
 //    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long Id;
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "GIAI_THUONG")
     private GiaiThuong giaiThuong;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne()
     @JoinColumn(name = "HDON")
     private HoaDon hoaDon;
 

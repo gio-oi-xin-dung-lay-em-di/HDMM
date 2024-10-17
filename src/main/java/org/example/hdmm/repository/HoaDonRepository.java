@@ -42,12 +42,12 @@ public interface HoaDonRepository extends JpaRepository<HoaDon, Long> {
             "(:nmTen is null or h.nmTen like %:nmTen%) and " +
             "(:tThai is null or h.tthai = :tThai) and " +
             "(:loaiNnt is null or h.loaiNnt = :loaiNnt) and " +
-            "(:loaiHd is null or 1=1) and " +
+            "(:loaiHd is null or h.khmhd = :loaiHd) and " +
             "(:kyHieu is null or h.khhd = :kyHieu) and " +
             "(:sohd is null or h.sohd = :sohd) and " +
             "(:nbMst is null or h.nbmst = :nbMst) and " +
             "(:nbTen is null or h.nbTen like %:nbTen%) and " +
-            "(:cqt is null or h.coQuanThue.cqt = :cqt) "
+            "(:cqt is null or h.coQuanThue.cqt = :cqt)"
     )
     List<HoaDon> traCuuHoaDon (Integer ky, Date startDate, Date endDate, Integer isQualified,
                                String nmMst, String nmTen, String tThai, Integer loaiNnt,
@@ -61,7 +61,7 @@ public interface HoaDonRepository extends JpaRepository<HoaDon, Long> {
             "(:nmTen is null or h.nmTen like %:nmTen%) and " +
             "(:tThai is null or h.tthai = :tThai) and " +
             "(:loaiNnt is null or h.loaiNnt = :loaiNnt) and " +
-            "(:loaiHd is null or 1=1) and " +
+            "(:loaiHd is null or h.khmhd = :loaiHd) and " +
             "(:kyHieu is null or h.khhd = :kyHieu) and " +
             "(:sohd is null or h.sohd = :sohd) and " +
             "(:nbMst is null or h.nbmst = :nbMst) and " +

@@ -26,4 +26,5 @@ public class KetQuaService {
         kq.setHoaDon(hoaDon);
         return ketQuaRepository.save(kq);
     }
+
 }

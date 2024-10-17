@@ -49,6 +49,8 @@ public class KyQuayThuongController {
         return ResponseEntity.status(HttpStatus.OK).body(kyQuayThuongService.getAllKyQuayThuongByCQT(cqtId,pageable));
     }
 
+
+
     @GetMapping("/quaythuong/{id}")
     public ResponseEntity<List<GiaiThuong>> quayThuong(@PathVariable(name = "id") Long id) {
         List<GiaiThuong> listGiai = kyQuayThuongService.quayThuong(id);
@@ -94,6 +96,11 @@ public class KyQuayThuongController {
     public ResponseEntity<List<Object[]>> count(@PathVariable("cqt") String cqt, @PathVariable("tungay") Date tungay, @PathVariable("denngay") Date denngay) {
 
         return ResponseEntity.status(HttpStatus.OK).body(hoaDonService.countData(cqt,tungay,denngay));
+    }
+    @GetMapping("/quaythuong2/{kqtid}")
+
+    public ResponseEntity<List<GiaiThuong>> quaythuong(@PathVariable("kqtid") Long kqtid) {
+        return ResponseEntity.status(HttpStatus.OK).body(kyQuayThuongService.quayThuong(kqtid));
     }
 
 

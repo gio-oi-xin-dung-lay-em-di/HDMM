@@ -41,7 +41,7 @@ public class HoaDonService{
         return hoaDonRepository.countTraCuuHoaDon(dto.getKy(),dto.getTuNgay(),dto.getDenNgay(),dto.getTrangThaiThamGia(),dto.getNmMst(),dto.getNmTen(),dto.getTtHdon(),dto.getLoaiNnt(),dto.getLoaiHd(),dto.getKyHieu(),dto.getSo(),dto.getNbMst(),dto.getNbTen(),dto.getCqt());
     }
 
-    public HoaDon hoadonmayman (String cqt, Date startDate,Date endDate,Integer loaiNnt,Integer stt,Integer number){
+    public HoaDon hoadonmayman (String cqt, Date startDate,Date endDate,Integer loaiNnt,Integer number){
         Pageable page = PageRequest.of(number,1);
         return hoaDonRepository.quayThuong(cqt,startDate,endDate,loaiNnt,page).get(0);
     }

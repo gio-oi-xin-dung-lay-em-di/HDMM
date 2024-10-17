@@ -3,14 +3,17 @@ package org.example.hdmm.service;
 import org.example.hdmm.dto.KyQuayThuongDTO;
 import org.example.hdmm.dto.UpdateKQTDTO;
 import org.example.hdmm.models.*;
+import org.example.hdmm.quaythuong.quaythuong;
 import org.example.hdmm.repository.CoQuanThueRepository;
 import org.example.hdmm.repository.GiaiThuongReppository;
 import org.example.hdmm.repository.KyQuayThuongRepository;
+import org.example.hdmm.util.RandomArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -35,6 +38,9 @@ public class KyQuayThuongService {
 
     public List<KyQuayThuong> getAllKyQuayThuongByCQT(String cqt, Pageable pageable) {
         return kyQuayThuongRepository.findAllByCQT(cqt,pageable);
+    }
+    public List<KyQuayThuong> getAllKyQuayThuongChuaQuay(String cqt) {
+        return kyQuayThuongRepository.findAllByCQT2(cqt);
     }
 
     // create
@@ -130,32 +136,45 @@ public class KyQuayThuongService {
     public List<GiaiThuong> quayThuong(Long kqtId){
         KyQuayThuong kqt = kyQuayThuongRepository.findById(kqtId).orElseThrow(()->new RuntimeException("kqtNotFound"));
         List<GiaiThuong> giaiThuongList = kqt.getGiaiThuongList();
-
-
-        int[] arrTong;
-
-
+        List<Thread> threads = new ArrayList<>();
         for(GiaiThuong giaiThuong: giaiThuongList){
-
-
-
-
-            if(giaiThuong.getSoGiaiCN()!=null&& giaiThuong.getSoGiaiDN()!=null){
-                int[] arrCn = new int[giaiThuong.getSoGiaiCN()];
-                int[] arrDn = new int[giaiThuong.getSoGiaiDN()];
-
-
-
-
-                //ketQuaService.create(giaiThuong,hoadon);
+            if(giaiThuong.getSoLuong()==0&&giaiThuong.getSoGiaiCN()==0&& giaiThuong.getSoGiaiDN()==0) throw new RuntimeException("so luong giai = 0");
+            if(giaiThuong.getSoGiaiCN()!=0&& giaiThuong.getSoGiaiDN()!=0){
+                int[] arrCn = RandomArray.getRandomNumbers(0,kqt.getCnDuDK()-1,giaiThuong.getSoGiaiCN());
+                int[] arrDn = RandomArray.getRandomNumbers(0,kqt.getDnDuDK()-1,giaiThuong.getSoGiaiDN());
+                for(int a:arrCn){
+                    Thread thread = new Thread(new quaythuong(a,2,kqt,giaiThuong,hoaDonService,ketQuaService));
+                    thread.start();
+                    threads.add(thread);
+                }
+                for(int a:arrDn){
+                    Thread thread = new Thread(new quaythuong(a,1,kqt,giaiThuong,hoaDonService,ketQuaService));
+                    thread.start();
+                    threads.add(thread);
+                }
             }
             else{
+                int[] tong = RandomArray.getRandomNumbers(0,kqt.getTongSo()-1,giaiThuong.getSoLuong());
+                for(int a:tong){
+                    Random r = new Random();
 
+                    Thread thread = new Thread(new quaythuong(a,null,kqt,giaiThuong,hoaDonService,ketQuaService));
+                    thread.start();
+                    threads.add(thread);
+                }
             }
 
-          //List<HoaDon>  listhd=   giaiThuongService.quayThuong(giaiThuong,kqt);
         }
-        return null;
+        try {
+            for(Thread t: threads){
+                t.join();
+            }
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        List<GiaiThuong> list = giaiThuongService.findByKyQuayThuong(kqtId);
+        return list;
     }
 
 

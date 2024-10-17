@@ -21,6 +21,9 @@ public interface KyQuayThuongRepository extends JpaRepository<KyQuayThuong, Long
     @Query("select e from KyQuayThuong e where e.coQuanThue.cqt = :cqt order by e.maKy desc ")
     List<KyQuayThuong> findAllByCQT(@Param("cqt") String cqt, Pageable pageable);
 
+    @Query("select e from KyQuayThuong e where e.coQuanThue.cqt = :cqt order by e.maKy desc ")
+    List<KyQuayThuong> findAllByCQT2(@Param("cqt") String cqt);
+
     @Query("SELECT CASE WHEN COUNT (e) >=1 THEN true ELSE false END FROM KyQuayThuong e WHERE e.maKy = :maKy")
     boolean existsByMaKy(@Param("maKy") Integer maKy);
     @Query("select count(e) from KyQuayThuong e where e.coQuanThue.cqt = :cqt")
