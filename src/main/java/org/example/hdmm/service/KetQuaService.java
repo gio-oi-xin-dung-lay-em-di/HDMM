@@ -9,22 +9,28 @@ import org.example.hdmm.repository.KetQuaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Random;
 
 @Service
 public class KetQuaService {
     @Autowired
     private KetQuaRepository ketQuaRepository;
-    @Autowired
-    private GiaiThuongReppository giaiThuongReppository;
-    @Autowired
-    private HoaDonRepository hoaDonRepository;
     public KetQua create(GiaiThuong giai,HoaDon hoaDon){
         KetQua kq = new KetQua();
         kq.setId(new Random().nextLong());
         kq.setGiaiThuong(giai);
         kq.setHoaDon(hoaDon);
-        return ketQuaRepository.save(kq);
+        ketQuaRepository.save(kq);
+        ketQuaRepository.flush();
+        return kq;
+    }
+    public List<KetQua> findAll(){
+        System.out.println(" day la contrll");
+        return ketQuaRepository.findAll();
+    }
+    public void deleteAll(){
+        ketQuaRepository.deleteAll();
     }
 
 }

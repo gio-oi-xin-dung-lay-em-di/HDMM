@@ -6,6 +6,7 @@ import org.example.hdmm.models.*;
 import org.example.hdmm.quaythuong.quaythuong;
 import org.example.hdmm.repository.CoQuanThueRepository;
 import org.example.hdmm.repository.GiaiThuongReppository;
+import org.example.hdmm.repository.KetQuaRepository;
 import org.example.hdmm.repository.KyQuayThuongRepository;
 import org.example.hdmm.util.RandomArray;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,8 +27,7 @@ public class KyQuayThuongService {
     private CoQuanThueRepository coQuanThueRepository;
     @Autowired
     private HoaDonService hoaDonService;
-    @Autowired
-    private GiaiThuongReppository giaiThuongReppository;
+
     @Autowired
     private GiaiThuongService giaiThuongService;
     @Autowired
@@ -39,9 +39,7 @@ public class KyQuayThuongService {
     public List<KyQuayThuong> getAllKyQuayThuongByCQT(String cqt, Pageable pageable) {
         return kyQuayThuongRepository.findAllByCQT(cqt,pageable);
     }
-    public List<KyQuayThuong> getAllKyQuayThuongChuaQuay(String cqt) {
-        return kyQuayThuongRepository.findAllByCQT2(cqt);
-    }
+
 
     // create
     public KyQuayThuong create(KyQuayThuongDTO dto,String cqtId) {
@@ -112,8 +110,6 @@ public class KyQuayThuongService {
 
         kqt.setTongSo(total.intValue());
         kqt.setStatus(3);
-        //hoaDonService.setAllKy(kqt.getTuNgay(),kqt.getDenNgay(),kqt.getMaKy());
-
         return kyQuayThuongRepository.save(kqt);
     }
 
@@ -132,7 +128,7 @@ public class KyQuayThuongService {
     }
 
 
-
+    private KetQuaRepository ketQuaRepository;
     public List<GiaiThuong> quayThuong(Long kqtId){
         KyQuayThuong kqt = kyQuayThuongRepository.findById(kqtId).orElseThrow(()->new RuntimeException("kqtNotFound"));
         List<GiaiThuong> giaiThuongList = kqt.getGiaiThuongList();
@@ -172,8 +168,8 @@ public class KyQuayThuongService {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
+        List<GiaiThuong> list = giaiThuongService.findByKyQuayThuong(kqt);
 
-        List<GiaiThuong> list = giaiThuongService.findByKyQuayThuong(kqtId);
         return list;
     }
 

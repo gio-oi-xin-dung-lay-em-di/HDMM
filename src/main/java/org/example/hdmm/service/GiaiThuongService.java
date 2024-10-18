@@ -74,8 +74,8 @@ public class GiaiThuongService {
     public GiaiThuong finById(Long id){
         return giaiThuongReppository.findById(id).orElseThrow(()-> new RuntimeException("Khong tim thay giai thuong"));
     }
-    public List<GiaiThuong> findByKyQuayThuong(Long kqtId){
-        return giaiThuongReppository.findByKQT(kqtId);
+    public List<GiaiThuong> findByKyQuayThuong(KyQuayThuong kqtId){
+        return giaiThuongReppository.findByKyQuayThuong(kqtId);
     }
     public void delete(Long giaiThuongID){
         giaiThuongReppository.deleteById(giaiThuongID);

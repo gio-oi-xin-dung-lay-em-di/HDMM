@@ -40,7 +40,7 @@ public class GiaiThuong {
 
 
 
-    @OneToMany(mappedBy = "giaiThuong",fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "giaiThuong")
     private List<KetQua> ketQuaList;
 
 

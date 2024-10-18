@@ -85,10 +85,10 @@ public class HoaDon {
     @Column(name = "STA_UPDATE", length = 1)
     private String staUpdate;
     @JsonIgnore
-    @OneToOne(mappedBy = "hoaDon",fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "hoaDon")
     private KetQua ketQua;
-
-    @ManyToOne()
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CQT")
 
     private CoQuanThue coQuanThue;

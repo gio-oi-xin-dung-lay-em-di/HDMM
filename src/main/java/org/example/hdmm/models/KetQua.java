@@ -19,8 +19,8 @@ public class KetQua {
     @Id
     @JsonSerialize(using = ToStringSerializer.class)
 //    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long Id;
-    @ManyToOne
+    private Long id;
+    @ManyToOne()
     @JsonIgnore
     @JoinColumn(name = "GIAI_THUONG")
     private GiaiThuong giaiThuong;
@@ -28,11 +28,4 @@ public class KetQua {
     @OneToOne()
     @JoinColumn(name = "HDON")
     private HoaDon hoaDon;
-
-
-
-
-
-
-
 }

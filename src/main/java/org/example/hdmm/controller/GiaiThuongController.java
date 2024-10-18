@@ -3,7 +3,10 @@ package org.example.hdmm.controller;
 import org.example.hdmm.dto.GiaiThuongDTO;
 import org.example.hdmm.dto.UpdateGiaiThuongDTO;
 import org.example.hdmm.models.GiaiThuong;
+import org.example.hdmm.models.KyQuayThuong;
+import org.example.hdmm.repository.KyQuayThuongRepository;
 import org.example.hdmm.service.GiaiThuongService;
+import org.example.hdmm.service.KyQuayThuongService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
@@ -19,6 +22,11 @@ public class GiaiThuongController {
     @Autowired
 
     private GiaiThuongService giaiThuongService;
+    @Autowired
+    private KyQuayThuongService kyQuayThuongService;
+    @Autowired
+    private KyQuayThuongRepository kyQuayThuongRepository;
+
     @GetMapping("/{id}")
     @CrossOrigin
     public ResponseEntity<GiaiThuong> getById(@PathVariable("id") Long id){
@@ -27,10 +35,10 @@ public class GiaiThuongController {
     @GetMapping("/ky/{id}")
     @CrossOrigin
     public ResponseEntity<List<GiaiThuong>> getByKy(@PathVariable("id") Long id){
+        KyQuayThuong kqt = kyQuayThuongRepository.findById(id).orElseThrow(()->new RuntimeException("kqtNotFound"));
 
 
-
-        return ResponseEntity.status(HttpStatus.OK).body(giaiThuongService.findByKyQuayThuong(id));
+        return ResponseEntity.status(HttpStatus.OK).body(giaiThuongService.findByKyQuayThuong(kqt));
     }
 
     @DeleteMapping("/{id}")
