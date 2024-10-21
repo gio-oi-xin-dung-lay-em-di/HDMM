@@ -3,8 +3,10 @@ package org.example.hdmm.repository;
 import org.example.hdmm.models.KyQuayThuong;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Date;
 import java.util.List;
@@ -20,6 +22,8 @@ public interface KyQuayThuongRepository extends JpaRepository<KyQuayThuong, Long
     boolean exists1ByDate(@Param("date") Date date , @Param("cqt") String cqt,@Param("id")Long id);
     @Query("select e from KyQuayThuong e where e.coQuanThue.cqt = :cqt order by e.maKy desc ")
     List<KyQuayThuong> findAllByCQT(@Param("cqt") String cqt, Pageable pageable);
+    @Query("select e from KyQuayThuong e where e.coQuanThue.cqt = :cqt and e.status = 3 order by e.maKy desc ")
+    List<KyQuayThuong> findAllByCQTAndStatus(@Param("cqt") String cqt);
 
     @Query("select e from KyQuayThuong e where e.coQuanThue.cqt = :cqt order by e.maKy desc ")
     List<KyQuayThuong> findAllByCQT2(@Param("cqt") String cqt);
@@ -29,4 +33,10 @@ public interface KyQuayThuongRepository extends JpaRepository<KyQuayThuong, Long
     @Query("select count(e) from KyQuayThuong e where e.coQuanThue.cqt = :cqt")
 
     Integer countByCQT(@Param("cqt") String cqt);
+
+    @Transactional
+    @Modifying
+    @Query("UPDATE KyQuayThuong k SET k.status = 3")
+    void resetStatus();
+
 }

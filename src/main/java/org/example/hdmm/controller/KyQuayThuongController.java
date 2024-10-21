@@ -48,6 +48,11 @@ public class KyQuayThuongController {
         Pageable pageable = PageRequest.of(page, size);
         return ResponseEntity.status(HttpStatus.OK).body(kyQuayThuongService.getAllKyQuayThuongByCQT(cqtId,pageable));
     }
+    @GetMapping("chuaquay/cqt/{cqtId}")
+    public ResponseEntity<List<KyQuayThuong>> findAllBYStatus(@PathVariable String cqtId) {
+
+        return ResponseEntity.status(HttpStatus.OK).body(kyQuayThuongService.getAllKyQuayThuongByCQTAndStatus(cqtId));
+    }
 
 
 
@@ -80,6 +85,12 @@ public class KyQuayThuongController {
     public ResponseEntity<KyQuayThuong> updateStatus( @PathVariable("id") Long id,@PathVariable("status") Integer status) {
         KyQuayThuong kqt = kyQuayThuongService.updateStatus(id,status);
         return ResponseEntity.status(HttpStatus.OK).body(kqt);
+    }
+    @PutMapping("resetkqtstatus")
+
+    public ResponseEntity<String> resetStatus() {
+        kyQuayThuongService.resetStatus();
+        return ResponseEntity.status(HttpStatus.OK).body("reset ok");
     }
 
 

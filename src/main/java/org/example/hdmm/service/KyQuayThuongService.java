@@ -14,9 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 
 @Service
@@ -38,6 +36,9 @@ public class KyQuayThuongService {
 
     public List<KyQuayThuong> getAllKyQuayThuongByCQT(String cqt, Pageable pageable) {
         return kyQuayThuongRepository.findAllByCQT(cqt,pageable);
+    }
+    public List<KyQuayThuong> getAllKyQuayThuongByCQTAndStatus(String cqt) {
+        return kyQuayThuongRepository.findAllByCQTAndStatus(cqt);
     }
 
 
@@ -95,6 +96,7 @@ public class KyQuayThuongService {
     }
     public KyQuayThuong xuli(Long id){
         KyQuayThuong kqt = kyQuayThuongRepository.findById(id).orElseThrow(() -> new RuntimeException("kqtNotFound"));
+        hoaDonService.setAllKy(kqt.getTuNgay(),kqt.getDenNgay(),kqt.getMaKy());
         Object[] countData = hoaDonService.countData(kqt.getCoQuanThue().getCqt(),kqt.getTuNgay(),kqt.getDenNgay()).get(0);
         BigDecimal dnDuDk = countData[0]==null?new BigDecimal(0):(BigDecimal) countData[0];
         BigDecimal cnDuDk =countData[1]==null?new BigDecimal(0):(BigDecimal) countData[1];;
@@ -123,6 +125,11 @@ public class KyQuayThuongService {
         return kyQuayThuongRepository.save(kqt);
     }
 
+    public void resetStatus() {
+
+         kyQuayThuongRepository.resetStatus();
+    }
+
     public Integer countTotal(String cqtId){
         return kyQuayThuongRepository.countByCQT(cqtId);
     }
@@ -131,34 +138,36 @@ public class KyQuayThuongService {
     private KetQuaRepository ketQuaRepository;
     public List<GiaiThuong> quayThuong(Long kqtId){
         KyQuayThuong kqt = kyQuayThuongRepository.findById(kqtId).orElseThrow(()->new RuntimeException("kqtNotFound"));
+        if(kqt.getStatus()==4) throw new RuntimeException("daquaythuong");
         List<GiaiThuong> giaiThuongList = kqt.getGiaiThuongList();
         List<Thread> threads = new ArrayList<>();
+        Set<Integer> listcn = new HashSet<>();
+        Set<Integer> listdn = new HashSet<>();
         for(GiaiThuong giaiThuong: giaiThuongList){
-            if(giaiThuong.getSoLuong()==0&&giaiThuong.getSoGiaiCN()==0&& giaiThuong.getSoGiaiDN()==0) throw new RuntimeException("so luong giai = 0");
+            if(giaiThuong.getSoLuong()==0) throw new RuntimeException("so luong giai = 0");
+            int[] arrCn;
+            int[] arrDn;
             if(giaiThuong.getSoGiaiCN()!=0&& giaiThuong.getSoGiaiDN()!=0){
-                int[] arrCn = RandomArray.getRandomNumbers(0,kqt.getCnDuDK()-1,giaiThuong.getSoGiaiCN());
-                int[] arrDn = RandomArray.getRandomNumbers(0,kqt.getDnDuDK()-1,giaiThuong.getSoGiaiDN());
-                for(int a:arrCn){
+                arrCn = RandomArray.getRandomNumbers(0,kqt.getCnDuDK()-1,giaiThuong.getSoGiaiCN(),listcn);
+                arrDn = RandomArray.getRandomNumbers(0,kqt.getDnDuDK()-1,giaiThuong.getSoGiaiDN(),listdn);
+            }else{
+                int cn = RandomArray.getRandomNumbers(0,kqt.getTongSo(),1)[0];
+                arrCn = RandomArray.getRandomNumbers(0,kqt.getCnDuDK()-1,cn,listcn);
+                arrDn = RandomArray.getRandomNumbers(0,kqt.getDnDuDK()-1,giaiThuong.getSoLuong()-cn,listdn);
+            }
+            for(int a:arrCn){
                     Thread thread = new Thread(new quaythuong(a,2,kqt,giaiThuong,hoaDonService,ketQuaService));
                     thread.start();
                     threads.add(thread);
-                }
-                for(int a:arrDn){
+                    listcn.add(a);
+            }
+            for(int a:arrDn){
                     Thread thread = new Thread(new quaythuong(a,1,kqt,giaiThuong,hoaDonService,ketQuaService));
                     thread.start();
                     threads.add(thread);
-                }
+                    listdn.add(a);
             }
-            else{
-                int[] tong = RandomArray.getRandomNumbers(0,kqt.getTongSo()-1,giaiThuong.getSoLuong());
-                for(int a:tong){
-                    Random r = new Random();
 
-                    Thread thread = new Thread(new quaythuong(a,null,kqt,giaiThuong,hoaDonService,ketQuaService));
-                    thread.start();
-                    threads.add(thread);
-                }
-            }
 
         }
         try {
@@ -169,7 +178,8 @@ public class KyQuayThuongService {
             throw new RuntimeException(e);
         }
         List<GiaiThuong> list = giaiThuongService.findByKyQuayThuong(kqt);
-
+        kqt.setStatus(4);
+        kyQuayThuongRepository.save(kqt);
         return list;
     }
 
