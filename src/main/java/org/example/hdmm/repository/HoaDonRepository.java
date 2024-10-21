@@ -21,8 +21,11 @@ public interface HoaDonRepository extends JpaRepository<HoaDon, Long> {
 
     @Modifying
     @Transactional
-    @Query("UPDATE HoaDon hd SET hd.ky = :ky WHERE hd.tdlap BETWEEN :startDate AND :endDate ")
-    void setAllKy(@Param("startDate") Date startDate, @Param("endDate") Date endDate, @Param("ky") Integer ky);
+    @Query("UPDATE HoaDon hd SET hd.ky = :ky WHERE hd.tdlap BETWEEN :startDate AND :endDate AND hd.coQuanThue.cqt = :cqt")
+    void setAllKy(@Param("startDate") Date startDate, @Param("endDate") Date endDate, @Param("ky") Integer ky,String cqt);
+
+
+
     @Query(value = "SELECT " +
             "    SUM(CASE WHEN is_qualified = 1 AND loai_nnt = 1 THEN 1 ELSE 0 END) AS dndudk, " +
             "    SUM(CASE WHEN is_qualified = 1 AND loai_nnt != 1 THEN 1 ELSE 0 END) AS cndudk, " +

@@ -21,8 +21,8 @@ public class HoaDonService{
         return hoaDonRepository.find10HoaDon( pageable);
     };
     @Async
-    public void setAllKy(Date startDate, Date endDate , Integer ky){
-        hoaDonRepository.setAllKy(startDate,endDate,ky);
+    public void setAllKy(Date startDate, Date endDate , Integer ky,String cqt){
+        hoaDonRepository.setAllKy(startDate,endDate,ky,cqt);
     }
     public List<Object[]> countData(String cqt , Date startDate , Date endDate){
         return hoaDonRepository.countData(cqt,startDate,endDate);

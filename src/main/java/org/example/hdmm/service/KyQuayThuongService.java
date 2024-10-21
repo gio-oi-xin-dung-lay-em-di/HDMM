@@ -96,20 +96,17 @@ public class KyQuayThuongService {
     }
     public KyQuayThuong xuli(Long id){
         KyQuayThuong kqt = kyQuayThuongRepository.findById(id).orElseThrow(() -> new RuntimeException("kqtNotFound"));
-        hoaDonService.setAllKy(kqt.getTuNgay(),kqt.getDenNgay(),kqt.getMaKy());
+        hoaDonService.setAllKy(kqt.getTuNgay(),kqt.getDenNgay(),kqt.getMaKy(),kqt.getCoQuanThue().getCqt());
         Object[] countData = hoaDonService.countData(kqt.getCoQuanThue().getCqt(),kqt.getTuNgay(),kqt.getDenNgay()).get(0);
         BigDecimal dnDuDk = countData[0]==null?new BigDecimal(0):(BigDecimal) countData[0];
         BigDecimal cnDuDk =countData[1]==null?new BigDecimal(0):(BigDecimal) countData[1];;
         BigDecimal dnKoDuDk = countData[2]==null?new BigDecimal(0):(BigDecimal) countData[2];;
         BigDecimal cnKoDuDk = countData[3]==null?new BigDecimal(0):(BigDecimal) countData[3];;
         BigDecimal total =  dnDuDk.add(dnKoDuDk).add(cnKoDuDk).add(cnDuDk);
-
-
         kqt.setCnDuDK(cnDuDk.intValue());
         kqt.setCnKoDuDK(cnKoDuDk.intValue());
         kqt.setDnDuDK(dnDuDk.intValue());
         kqt.setDnKoDuDK(dnKoDuDk.intValue());
-
         kqt.setTongSo(total.intValue());
         kqt.setStatus(3);
         return kyQuayThuongRepository.save(kqt);
