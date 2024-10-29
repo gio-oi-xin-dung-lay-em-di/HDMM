@@ -50,7 +50,7 @@ public interface HoaDonRepository extends JpaRepository<HoaDon, Long> {
             "(:sohd is null or h.sohd = :sohd) and " +
             "(:nbMst is null or h.nbmst = :nbMst) and " +
             "(:nbTen is null or h.nbTen like %:nbTen%) and " +
-            "(:cqt is null or h.coQuanThue.cqt = :cqt)"
+            "(:cqt is null or h.coQuanThue.cqt = :cqt) order by h.tdlap"
     )
     List<HoaDon> traCuuHoaDon (Integer ky, Date startDate, Date endDate, Integer isQualified,
                                String nmMst, String nmTen, String tThai, Integer loaiNnt,
@@ -82,10 +82,44 @@ public interface HoaDonRepository extends JpaRepository<HoaDon, Long> {
     )
     List<HoaDon> quayThuong(String cqt ,Date startDate , Date endDate , Integer loaiNnt ,Pageable pageable);
 
+    @Transactional
+    @Modifying
+    @Query(value = "MERGE INTO baoph_ds_hdon target " +
+            "USING ( " +
+            "    SELECT id, ROW_NUMBER() OVER (ORDER BY loai_nnt DESC) AS new_stt " +
+            "    FROM baoph_ds_hdon hd " +
+            "    WHERE hd.cqt = :cqt " +
+            "      AND hd.is_qualified = 1 " +
+            "      AND (:loaiNnt IS NULL OR hd.loai_nnt = :loaiNnt) " +
+            "      AND (hd.tdlap BETWEEN :startDate AND :endDate) " +
+            ") temp " +
+            "ON (target.id = temp.id) " +
+            "WHEN MATCHED THEN " +
+            "UPDATE SET target.stt = temp.new_stt",
+            nativeQuery = true)
+    void updateStt(String cqt, Integer loaiNnt, Date startDate, Date endDate);
+    @Transactional
+    @Modifying
+    @Query("update HoaDon h set h.stt = null ")
+    void resetStt();
+
+    @Transactional
+    @Modifying
+    @Query("UPDATE HoaDon h SET h.lydo = :lydo, h.isQualified = 3 WHERE h.id IN :list")
+    void loaiBo(@Param("lydo") String lydo, @Param("list") Integer[] list);
+
+
+    @Transactional
+    @Modifying
+    @Query("UPDATE HoaDon h SET h.lydo = null, h.isQualified = 1 WHERE h.id IN :list")
+    void chapNhan(@Param("list") Integer[] list);
 
 
 
-
+    @Transactional
+    @Modifying
+    @Query("UPDATE HoaDon h SET h.lydo = :lydo, h.isQualified = 3 WHERE h.id = :id ")
+    void updateQualified(Integer id , String lydo);
 
 
 }

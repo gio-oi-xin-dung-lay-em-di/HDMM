@@ -6,12 +6,10 @@ import org.example.hdmm.repository.HoaDonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.sql.Date;
 import java.util.List;
-import java.util.Objects;
 
 @Service
 public class HoaDonService{
@@ -20,7 +18,7 @@ public class HoaDonService{
     public List<HoaDon> find10HoaDon(Pageable pageable){
         return hoaDonRepository.find10HoaDon( pageable);
     };
-    @Async
+
     public void setAllKy(Date startDate, Date endDate , Integer ky,String cqt){
         hoaDonRepository.setAllKy(startDate,endDate,ky,cqt);
     }
@@ -40,6 +38,24 @@ public class HoaDonService{
         Pageable page = PageRequest.of(number,1);
         return hoaDonRepository.quayThuong(cqt,startDate,endDate,loaiNnt,page).get(0);
     }
+    public void updateStt(String cqt ,Integer loaiNnt , Date startDate , Date endDate ){
+        System.out.println(startDate+" //" + endDate+"//");
+        hoaDonRepository.updateStt(cqt,loaiNnt,startDate , endDate);
+    }
+    public void resetStt(){
 
+        hoaDonRepository.resetStt();
+
+    }
+    public void loaiBo(String data,Integer[] listHdon){
+        hoaDonRepository.loaiBo(data,listHdon);
+    }
+    public void chapNhan(String data,Integer[] listHdon){
+        hoaDonRepository.chapNhan(listHdon);
+    }
+
+    public void updateQualified(Integer id , String lydo){
+        hoaDonRepository.updateQualified(id,lydo);
+    }
 
 }

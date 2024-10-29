@@ -88,7 +88,7 @@ public class HoaDon {
     @OneToOne(mappedBy = "hoaDon")
     private KetQua ketQua;
     @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "CQT")
 
     private CoQuanThue coQuanThue;

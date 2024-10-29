@@ -96,12 +96,23 @@ public class KyQuayThuongService {
     }
     public KyQuayThuong xuli(Long id){
         KyQuayThuong kqt = kyQuayThuongRepository.findById(id).orElseThrow(() -> new RuntimeException("kqtNotFound"));
-        hoaDonService.setAllKy(kqt.getTuNgay(),kqt.getDenNgay(),kqt.getMaKy(),kqt.getCoQuanThue().getCqt());
+        List<GiaiThuong> gtList = kqt.getGiaiThuongList();
+        if(gtList.size()==0) throw new RuntimeException("koCoGiaiThuong");
+        int cn =0;
+        int dn =0;
+        for(GiaiThuong gt:gtList){
+            cn += gt.getSoGiaiCN();
+            dn += gt.getSoGiaiDN();
+        }
+        if(cn==0 && dn!=0) hoaDonService.updateStt(kqt.getCoQuanThue().getCqt(),2,kqt.getTuNgay(),kqt.getDenNgay());
+        else if (dn==0 && cn!=0) hoaDonService.updateStt(kqt.getCoQuanThue().getCqt(),2,kqt.getTuNgay(),kqt.getDenNgay());
+        else hoaDonService.updateStt(kqt.getCoQuanThue().getCqt(),null,kqt.getTuNgay(),kqt.getDenNgay());
+
         Object[] countData = hoaDonService.countData(kqt.getCoQuanThue().getCqt(),kqt.getTuNgay(),kqt.getDenNgay()).get(0);
         BigDecimal dnDuDk = countData[0]==null?new BigDecimal(0):(BigDecimal) countData[0];
-        BigDecimal cnDuDk =countData[1]==null?new BigDecimal(0):(BigDecimal) countData[1];;
-        BigDecimal dnKoDuDk = countData[2]==null?new BigDecimal(0):(BigDecimal) countData[2];;
-        BigDecimal cnKoDuDk = countData[3]==null?new BigDecimal(0):(BigDecimal) countData[3];;
+        BigDecimal cnDuDk =countData[1]==null?new BigDecimal(0):(BigDecimal) countData[1];
+        BigDecimal dnKoDuDk = countData[2]==null?new BigDecimal(0):(BigDecimal) countData[2];
+        BigDecimal cnKoDuDk = countData[3]==null?new BigDecimal(0):(BigDecimal) countData[3];
         BigDecimal total =  dnDuDk.add(dnKoDuDk).add(cnKoDuDk).add(cnDuDk);
         kqt.setCnDuDK(cnDuDk.intValue());
         kqt.setCnKoDuDK(cnKoDuDk.intValue());
@@ -109,6 +120,7 @@ public class KyQuayThuongService {
         kqt.setDnKoDuDK(dnKoDuDk.intValue());
         kqt.setTongSo(total.intValue());
         kqt.setStatus(3);
+        hoaDonService.setAllKy(kqt.getTuNgay(),kqt.getDenNgay(),kqt.getMaKy(),kqt.getCoQuanThue().getCqt());
         return kyQuayThuongRepository.save(kqt);
     }
 

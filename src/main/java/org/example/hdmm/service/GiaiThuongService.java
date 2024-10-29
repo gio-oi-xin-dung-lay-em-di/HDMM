@@ -57,7 +57,7 @@ public class GiaiThuongService {
 
         if(dto.getGiaTri()==null||dto.getGiaTri()<1000000) throw new RuntimeException("giatriinvalid");
         if(dto.getSoLuong()==null||dto.getSoLuong()<1) throw new RuntimeException("soluongInvalid");
-        if(dto.getSoGiaiCN()!=null && dto.getSoGiaiDN()!=null && (dto.getSoGiaiCN()+dto.getSoGiaiDN()>dto.getSoLuong())) throw new RuntimeException("giaiCNvaDNinvalid");
+        if(dto.getSoGiaiCN()!=null && dto.getSoGiaiDN()!=null && (dto.getSoGiaiCN()+dto.getSoGiaiDN()!=dto.getSoLuong())) throw new RuntimeException("giaiCNvaDNinvalid");
 
         GiaiThuong giaiThuong = giaiThuongReppository.findById(giaithuongId).orElseThrow(()->new RuntimeException("Khong tim thay giai thuong"));
 
@@ -81,24 +81,6 @@ public class GiaiThuongService {
         giaiThuongReppository.deleteById(giaiThuongID);
     }
 
-    public List<HoaDon> quayGiaiThuong(GiaiThuong giaiThuong,KyQuayThuong kqt){
 
-
-
-
-       Integer cn =  giaiThuong.getSoGiaiCN();
-       Integer dn = giaiThuong.getSoGiaiDN();
-       Integer tongSo = giaiThuong.getSoLuong();
-       Integer dndudk = kqt.getDnDuDK();
-       Integer cndudk = kqt.getCnDuDK();
-       if(cn!=null && dn!=null && cn!=0 && dn!=0){
-          int[] arr = new int[cn];
-       }
-       else{
-
-       }
-       return null;
-
-    }
 
 }

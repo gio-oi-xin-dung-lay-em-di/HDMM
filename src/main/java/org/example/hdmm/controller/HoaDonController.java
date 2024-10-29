@@ -1,7 +1,20 @@
 package org.example.hdmm.controller;
 
+import jakarta.servlet.http.HttpServletResponse;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.xssf.streaming.SXSSFSheet;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.example.hdmm.dto.FindHoaDonDTO;
+import org.example.hdmm.dto.LoaiBoHdonDTO;
 import org.example.hdmm.models.HoaDon;
+import org.example.hdmm.service.ExportHdon;
 import org.example.hdmm.service.HoaDonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -9,8 +22,17 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Date;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 @CrossOrigin(origins = "http://localhost:3000", maxAge = 3600)
 @RestController
@@ -21,7 +43,7 @@ public class HoaDonController {
 
     @GetMapping("/cqt/{cqt}/sd/{startDate}/ed/{endDate}")
     public List<Object[]> countData(@PathVariable("cqt") String cqt,
-                                   @PathVariable("startDate")  Date startDate,
+                                   @PathVariable("startDate") Date startDate,
                                    @PathVariable("endDate")  Date endDate) {
         return hoaDonService.countData(cqt, startDate, endDate);
     }
@@ -39,13 +61,82 @@ public class HoaDonController {
         Integer total= hoaDonService.countTraCuuHoaDon(dto);
         return ResponseEntity.status(HttpStatus.OK).body(total);
     }
+    @PostMapping("/loaibo")
+    public String loaiBoHdon(@RequestBody LoaiBoHdonDTO dto) {
+        hoaDonService.loaiBo(dto.getData(),dto.getListhdon());
+        return "daLoaiBoHdon";
+    }
+
+    @PostMapping("/chapnhan")
+    public String chapNhan(@RequestBody LoaiBoHdonDTO dto) {
+        hoaDonService.chapNhan(dto.getData(),dto.getListhdon());
+        return "daChapNhanHdon";
+    }
 
 
 
+    @GetMapping("/updateStt/{cqt}/{startDate}/{endDate}/{loaiNnt}")
+    public void countData(@PathVariable("cqt") String cqt,
+                          @PathVariable("startDate")Date startDate,
+                          @PathVariable("endDate")Date endDate,
+                          @PathVariable("loaiNnt") Integer loaiNnt) {
+         hoaDonService.updateStt(cqt,loaiNnt, startDate, endDate);
+    }
+
+    @PutMapping("/resetStt")
+    public void reset(){
+        hoaDonService.resetStt();
+    }
+    @Autowired
+    private ExportHdon exportHdon;
+    @PostMapping("/export-to-excel")
+    public void exportIntoExcelFile(HttpServletResponse response, @RequestBody FindHoaDonDTO dto) throws IOException {
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        String headerKey = "Content-Disposition";
+        String headerValue = "attachment; filename=hoadon.xlsx";
+        response.setHeader(headerKey, headerValue);
+        response.setHeader(headerKey, headerValue);
+
+        exportHdon.generateExcelFile(response,dto);
+    }
 
 
+    @PostMapping("/import")
+    public String mapReapExcelDatatoDB(@RequestParam("file") MultipartFile reapExcelDataFile) throws IOException {
+        String fileName = reapExcelDataFile.getOriginalFilename();
+        boolean validFile = fileName != null && (fileName.toLowerCase().endsWith(".xls") || fileName.toLowerCase().endsWith(".xlsx"));
+        if (!validFile) {
+            throw new RuntimeException("fileTypeInvalid");
+        } else {
+            System.out.println("file dung");
+        }
+        exportHdon.readExcelFromInputStream(reapExcelDataFile.getInputStream());
+        return "success";
+    }
 
+    @GetMapping("/test-excel")
+    public void exportToExcel(HttpServletResponse response) throws IOException {
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        String headerKey = "Content-Disposition";
+        String headerValue = "attachment; filename=hoadon.xlsx";
+        response.setHeader(headerKey, headerValue);
 
+        SXSSFWorkbook workbook = new SXSSFWorkbook();
+        Sheet sheet = workbook.createSheet("HoaDon");
+        Row headerRow = sheet.createRow(0);
+        headerRow.createCell(0).setCellValue("ID");
+        headerRow.createCell(1).setCellValue("Tên hóa đơn");
+        headerRow.createCell(2).setCellValue("Số tiền");
+        int rowCount = 1;
+        for (int i = 1 ; i<=10;i++) {
+            Row row = sheet.createRow(rowCount++);
+            row.createCell(0).setCellValue("hello");
+            row.createCell(1).setCellValue("Hello");
+            row.createCell(2).setCellValue("Hello");
+        }
+        workbook.write(response.getOutputStream());
+        workbook.close();
+    }
 
 
 }
