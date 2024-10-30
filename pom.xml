@@ -40,6 +40,13 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
+<!--        &lt;!&ndash; https://mvnrepository.com/artifact/com.monitorjbl/xlsx-streamer &ndash;&gt;-->
+<!--        <dependency>-->
+<!--            <groupId>com.monitorjbl</groupId>-->
+<!--            <artifactId>xlsx-streamer</artifactId>-->
+<!--            <version>2.2.0</version>-->
+<!--        </dependency>-->
+
         <!-- https://mvnrepository.com/artifact/com.microsoft.sqlserver/mssql-jdbc -->
         <dependency>
             <groupId>com.microsoft.sqlserver</groupId>
@@ -54,11 +61,30 @@
         </dependency>
 
 
+
+        <dependency>
+            <groupId>com.github.pjfanning</groupId>
+            <artifactId>excel-streaming-reader</artifactId>
+            <version>3.2.0</version>
+        </dependency>
+
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-ooxml</artifactId>
-            <version>5.3.0</version>
+            <version>5.2.3</version> <!-- Cập nhật phiên bản nếu cần -->
         </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>5.2.3</version> <!-- Cập nhật phiên bản nếu cần -->
+        </dependency>
+        <dependency>
+            <groupId>org.apache.xmlbeans</groupId>
+            <artifactId>xmlbeans</artifactId>
+            <version>5.1.1</version> <!-- Cần thiết cho xử lý XML -->
+        </dependency>
+
+
 
         <dependency>
             <groupId>com.oracle.database.jdbc</groupId>

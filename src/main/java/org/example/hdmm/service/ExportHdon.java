@@ -1,5 +1,5 @@
 package org.example.hdmm.service;
-
+import com.github.pjfanning.xlsx.StreamingReader;
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -63,22 +64,7 @@ public class ExportHdon {
         }
     }
 
-//    private void createCell(Row row, int columnCount, Object valueOfCell) {
-//        Cell cell = row.createCell(columnCount);
-//        if (valueOfCell == null) {
-//            cell.setCellValue("");
-//        } else if (valueOfCell instanceof Integer) {
-//            cell.setCellValue((Integer) valueOfCell);
-//        } else if (valueOfCell instanceof Long) {
-//            cell.setCellValue((Long) valueOfCell);
-//        } else if (valueOfCell instanceof String) {
-//            cell.setCellValue((String) valueOfCell);
-//        } else if (valueOfCell instanceof Boolean) {
-//            cell.setCellValue((Boolean) valueOfCell);
-//        } else {
-//            cell.setCellValue(valueOfCell.toString());
-//        }
-//    }
+
 
     void createCell(Row row, int column, String value) {
         Cell cell = row.createCell(column);
@@ -153,22 +139,41 @@ public class ExportHdon {
             System.out.println(LocalDateTime.now());
         }
     }
-    public void readExcelFromInputStream(InputStream inputStream) {
 
 
 
+    public void readExcelFromInputStream(InputStream inputStream) throws IOException {
 
-        try (XSSFWorkbook workbook = new XSSFWorkbook(inputStream)) {
-            System.out.println("number of sheet:"+ workbook.getNumberOfSheets());
+        try (Workbook workbook = StreamingReader.builder()
+                .rowCacheSize(100)     // Số hàng giữ lại trong bộ nhớ
+                .bufferSize(4096)      // Bộ đệm đọc file
+                .open(inputStream)) {   // inputStream là InputStream của file Excel
+            for (Sheet sheet : workbook) {
+                System.out.println("Sheet: " + sheet.getSheetName());
 
-            Sheet sheet = workbook.getSheetAt(0);
-            Row r = sheet.getRow(0);
-            System.out.println(r.getCell(0).getStringCellValue());
-            for (Row row : sheet) {
-                System.out.println(row.getCell(0).getStringCellValue());
+                for (Row row : sheet) {
+                    if (row.getRowNum() == 0) {
+                        if (row.getPhysicalNumberOfCells() != 19) throw new RuntimeException("fileKoDungDinhDang");
+                    } else{
+                        if (row.getCell(18)!=null && row.getCell(18).getNumericCellValue() == 2) {
+                            String id = row.getCell(0).getStringCellValue();
+                            String lydo = row.getCell(17)!=null?row.getCell(17).getStringCellValue():null;
+                            System.out.println("id:"+id+
+                                    "ly do: "+lydo);
+                        }
+                    }
+                }
             }
+
+
+
+            System.out.println("doc xong");
+            System.out.println();
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
+}
+
+
+
 }

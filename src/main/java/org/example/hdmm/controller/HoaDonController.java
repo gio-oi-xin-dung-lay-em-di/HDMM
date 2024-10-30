@@ -110,33 +110,14 @@ public class HoaDonController {
         } else {
             System.out.println("file dung");
         }
-        exportHdon.readExcelFromInputStream(reapExcelDataFile.getInputStream());
+        try(InputStream is = reapExcelDataFile.getInputStream()){
+            exportHdon.readExcelFromInputStream(is);
+        }
+
         return "success";
     }
 
-    @GetMapping("/test-excel")
-    public void exportToExcel(HttpServletResponse response) throws IOException {
-        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-        String headerKey = "Content-Disposition";
-        String headerValue = "attachment; filename=hoadon.xlsx";
-        response.setHeader(headerKey, headerValue);
 
-        SXSSFWorkbook workbook = new SXSSFWorkbook();
-        Sheet sheet = workbook.createSheet("HoaDon");
-        Row headerRow = sheet.createRow(0);
-        headerRow.createCell(0).setCellValue("ID");
-        headerRow.createCell(1).setCellValue("Tên hóa đơn");
-        headerRow.createCell(2).setCellValue("Số tiền");
-        int rowCount = 1;
-        for (int i = 1 ; i<=10;i++) {
-            Row row = sheet.createRow(rowCount++);
-            row.createCell(0).setCellValue("hello");
-            row.createCell(1).setCellValue("Hello");
-            row.createCell(2).setCellValue("Hello");
-        }
-        workbook.write(response.getOutputStream());
-        workbook.close();
-    }
 
 
 }
